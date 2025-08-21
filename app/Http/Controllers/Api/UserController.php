@@ -19,7 +19,7 @@ class UserController extends Controller
      public $userService;
     public function __construct(UserService $userService)
     {
-        // You can apply middleware here if needed
+     
         // $this->middleware('auth:sanctum');
         $this->userService = $userService;
     }

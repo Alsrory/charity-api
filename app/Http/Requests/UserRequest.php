@@ -25,7 +25,6 @@ class UserRequest extends FormRequest
         'email' => 'required|email|unique:users,email,' . $this->user?->id,
          'password' => $this->isMethod('post') ? 'required|min:6' : 'sometimes|min:6',
          'phone'=>['string','nullable',],
-         'address'=>['string','nullable'],
         'role_ids' => 'sometimes|array',
         'role_ids.*' => 'exists:roles,id',
     ];

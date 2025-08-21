@@ -1,14 +1,14 @@
 <x-mail::message>
 # Introduction
 
-The body of your message.
-THis my first app in this Section of our lab;
+مرحبا بك  {{ $user->name }},<br>
+نحن سعداء بانضمامك إلينا في {{ config('app.name') }}.   ستجد الكثير من المبادئ والمعلومات المفيدة في هذا التطبيق.
 
 <x-mail::button :url="''">
-Button Text
+تصفح الموقع
 </x-mail::button>
 
-Thanks,<br>
+شكرا<br>
 {{ config('app.name') }}
 </x-mail::message>
 

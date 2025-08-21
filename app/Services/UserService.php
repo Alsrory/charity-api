@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\SendUserEmail;
 use App\Mail\UserEmail;
 use App\Models\Role;
 use App\Models\User;
@@ -23,7 +24,8 @@ class UserService
         $roleIds = $data['role_ids'] ?? [Role::where('name', 'user')->value('id')];
         $user->roles()->attach($roleIds);
         // send email
-        Mail::to($user->email)->send(new UserEmail($user));
+         SendUserEmail::dispatch($user);
+        // Optionally, you can send an email directly
 
         return $user;
     }

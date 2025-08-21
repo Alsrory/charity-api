@@ -22,8 +22,8 @@ class RoleRequest extends FormRequest
     public function rules(): array
     {
         return [ 
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['', 'string', 'max:500'], // Optional description field
+            'name' =>$this->isMethod('post')? ['required', 'string', 'max:255']: ['sometimes', 'string', 'max:255'],
+            'description' => ['string', 'required', 'max:255'], // Optional description field
 
 
         ];
