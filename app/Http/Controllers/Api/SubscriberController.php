@@ -13,6 +13,20 @@ use Illuminate\Support\Facades\Auth;
 
 class SubscriberController extends Controller
 {   use ResponseTrait;
+
+    /**
+ * @OA\Get(
+ *     path="/api/subscribers",
+ *     summary="جلب كل المشتركين",
+ *     tags={"Subscribers"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Response(
+ *         response=200,
+ *         description="نجاح العملية",
+ *         @OA\JsonContent(ref="#/components/schemas/SubscriberResponse")
+ *     )
+ * )
+ */
    // ✅ List all subscribers (admin only)
     public function index()
     {   $subscribers = Subscriber::with('user')->get();
@@ -20,7 +34,23 @@ class SubscriberController extends Controller
         
         return $this->successResponse( SubscriberResource::collection($subscribers), $message, 200);
     }
-
+/**
+     * @OA\Post(
+     *     path="/api/subscribers",
+     *     summary="إضافة مشترك جديد",
+     *     tags={"Subscribers"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"user_id","subscription_status"},
+     *             @OA\Property(property="user_id", type="integer", example=1),
+     *             @OA\Property(property="subscription_status", type="string", example="active")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="تم الإنشاء", @OA\JsonContent(ref="#/components/schemas/SubscriberResponse"))
+     * )
+     */
+    
     //  Subscribe a user (first-time subscription)
     public function store(SubscriberRequest $request)
     {     $sub=$request->validated();
@@ -37,7 +67,17 @@ class SubscriberController extends Controller
         return $this->successResponse( new SubscriberResource($subscriber),__('message.subscriber_store'), 201);
     }
 
-    // Show one subscriber
+     /**
+     * @OA\Get(
+     *     path="/api/subscribers/{id}",
+     *     summary="عرض مشترك واحد",
+     *     tags={"Subscribers"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="نجاح العملية", @OA\JsonContent(ref="#/components/schemas/SubscriberResponse")),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
+     */
+    // ✅ Show one subscriber by ID
     public function show(Subscriber $subscriber)
     {   $subscriber->loadMissing(['user', 'subscriptions']);
 
@@ -45,7 +85,23 @@ class SubscriberController extends Controller
     }
     
 
-    //  Update subscription (e.g., status)
+      /**
+     * @OA\Put(
+     *     path="/api/subscribers/{id}",
+     *     summary="تحديث مشترك",
+     *     tags={"Subscribers"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="subscription_status", type="string", example="inactive")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="تم التحديث", @OA\JsonContent(ref="#/components/schemas/SubscriberResponse")),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
+     */
+    // ✅ Update a subscriber (admin only)
     public function update(Request $request, Subscriber $subscriber)
     {
           $subscriber->loadMissing('user');
@@ -59,7 +115,17 @@ class SubscriberController extends Controller
         return $this->successResponse( new SubscriberResource($subscriber),__('message.subscriber_update'), 200);
     }
 
-    //  Cancel/delete a subscription
+   /**
+     * @OA\Delete(
+     *     path="/api/subscribers/{id}",
+     *     summary="حذف مشترك",
+     *     tags={"Subscribers"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="تم الحذف"),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
+     */
+    // ✅ Delete a subscriber (admin only)
     public function destroy(Subscriber $subscriber)
     {
         

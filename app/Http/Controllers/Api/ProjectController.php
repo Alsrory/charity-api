@@ -19,6 +19,15 @@ class ProjectController extends Controller
     {
 
     }
+     /**
+     * @OA\Get(
+     *     path="/api/projects",
+     *     summary="جلب كل المشاريع",
+     *     tags={"Projects"},
+     *     @OA\Response(response=200, description="نجاح العملية", @OA\JsonContent(ref="#/components/schemas/ProjectResponse"))
+     * )
+     */
+    // ✅ List all projects 
     public function index()
     {
        $projects = Project::all(); // Assuming you have a Project model
@@ -32,15 +41,40 @@ class ProjectController extends Controller
         
     }
 
-    // Additional methods for creating, updating, and deleting projects
-
-    // For example:
+    /**
+     * @OA\Get(
+     *     path="/api/projects/{id}",
+     *     summary="عرض مشروع واحد",
+     *     tags={"Projects"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="نجاح العملية", @OA\JsonContent(ref="#/components/schemas/ProjectResponse")),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
+     */
+    // ✅ Show one project by ID
     public function show(Project $project)
     {
        
         return $this->successResponse(new ProjectResource($project), __('message.project_show'), 200);
     }
-   
+   /**
+     * @OA\Post(
+     *     path="/api/projects",
+     *     summary="إنشاء مشروع جديد",
+     *     tags={"Projects"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","description","status"},
+     *             @OA\Property(property="name", type="string", example="مشروع خيري"),
+     *             @OA\Property(property="description", type="string", example="تفاصيل المشروع"),
+     *             @OA\Property(property="status", type="string", example="active")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="تم الإنشاء", @OA\JsonContent(ref="#/components/schemas/ProjectResponse"))
+     * )
+     */
+    // ✅ Create a new project (admin only)
     public function store(ProjectRequest $request)
     {  
         // dd('Store method called');
@@ -58,6 +92,25 @@ class ProjectController extends Controller
         // return response()->json($project, 201);
        
     }
+    /**
+     * @OA\Put(
+     *     path="/api/projects/{id}",
+     *     summary="تحديث مشروع",
+     *     tags={"Projects"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="مشروع محدث"),
+     *             @OA\Property(property="description", type="string", example="تحديث التفاصيل"),
+     *             @OA\Property(property="status", type="string", example="inactive")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="تم التحديث", @OA\JsonContent(ref="#/components/schemas/ProjectResponse")),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
+     */
+    // ✅ Update a project (admin only)
     public function update(ProjectRequest $request, Project $project)
     {
         $validatedData = $request->validated();
@@ -69,6 +122,17 @@ class ProjectController extends Controller
         // return response()->json($project, 200);
 
     }
+    /**
+     * @OA\Delete(
+     *     path="/api/projects/{id}",
+     *     summary="حذف مشروع",
+     *     tags={"Projects"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="تم الحذف"),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
+     */
+    // ✅ Delete a project (admin only)
     public function destroy(Project $project)
     {
         $project->delete();
@@ -77,16 +141,4 @@ class ProjectController extends Controller
         // return response()->json(null, 204);
     }
 
-    public function showView()
-    {
-        return view('add-project'); 
-    }
-
-
-public function showproject()
-{
-    $projects = Project::all();
-  return view('projects', compact('projects'));
-
-}
 }

@@ -20,6 +20,20 @@ class NewsController extends Controller
     {
 
     }
+     /**
+     * @OA\Get(
+     *     path="/api/news",
+     *     summary="جلب كل الأخبار",
+     *     tags={"News"},
+     *     @OA\Response(response=200, description="نجاح العملية", @OA\JsonContent(
+     *         type="object",
+     *         @OA\Property(property="status", type="boolean", example=true),
+     *         @OA\Property(property="message", type="string", example="News retrieved successfully"),
+     *         @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/News"))
+     *     ))
+     * )
+     */
+    // ✅ List all projects 
     public function index()
     {
       $news=News::with('user')->get();

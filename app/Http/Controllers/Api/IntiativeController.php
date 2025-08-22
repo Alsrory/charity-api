@@ -20,6 +20,15 @@ class IntiativeController extends Controller
         // You can apply middleware here if needed
         // $this->middleware('auth:sanctum');
     }
+     /**
+     * @OA\Get(
+     *     path="/api/initiatives",
+     *     summary="جلب كل المبادرات",
+     *     tags={"Initiatives"},
+     *     @OA\Response(response=200, description="نجاح العملية", @OA\JsonContent(ref="#/components/schemas/InitiativeResponse"))
+     * )
+     */
+    // ✅ List all initiatives
     public function index( )
     {    
          $initaitives=Initiative::all();
@@ -27,9 +36,23 @@ class IntiativeController extends Controller
      return $this->successResponse( InitiativeResource::collection( $initaitives),__('message.donation_index'),200);
     } 
 
-    /**
-     * Store a newly created resource in storage.
+   /**
+     * @OA\Post(
+     *     path="/api/initiatives",
+     *     summary="إنشاء مبادرة جديدة",
+     *     tags={"Initiatives"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","description"},
+     *             @OA\Property(property="name", type="string", example="مبادرة خيرية"),
+     *             @OA\Property(property="description", type="string", example="تفاصيل المبادرة")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="تم الإنشاء", @OA\JsonContent(ref="#/components/schemas/InitiativeResponse"))
+     * )
      */
+    // ✅ Create a new initiative (admin only)
     public function store(IntiativeRequest $request)
     {
          $validData=$request->validated();
@@ -44,9 +67,17 @@ class IntiativeController extends Controller
        return $this->successResponse(new InitiativeResource($data),__('message.donation_store'),200);
     }
 
-    /**
-     * Display the specified resource.
+     /**
+     * @OA\Get(
+     *     path="/api/initiatives/{id}",
+     *     summary="عرض مبادرة واحدة",
+     *     tags={"Initiatives"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="نجاح العملية", @OA\JsonContent(ref="#/components/schemas/InitiativeResponse")),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
      */
+    // ✅ Show one initiative by ID
     public function show(Initiative $initiative )
     {
         return $this->successResponse(new InitiativeResource($initiative) ,__('message.initiative_show'),200);
@@ -54,8 +85,23 @@ class IntiativeController extends Controller
 
    
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/initiatives/{id}",
+     *     summary="تحديث مبادرة",
+     *     tags={"Initiatives"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="مبادرة محدثة"),
+     *             @OA\Property(property="description", type="string", example="تفاصيل محدثة")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="تم التحديث", @OA\JsonContent(ref="#/components/schemas/InitiativeResponse")),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
      */
+    // ✅ Update a initiative (admin only)
     public function update(IntiativeRequest $request, Initiative $initiative)
     {
         $validData = $request->validated();
@@ -68,8 +114,16 @@ class IntiativeController extends Controller
   
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/initiatives/{id}",
+     *     summary="حذف مبادرة",
+     *     tags={"Initiatives"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="تم الحذف"),
+     *     @OA\Response(response=404, description="غير موجود")
+     * )
      */
+    // ✅ Delete a initiative (admin only)
     public function destroy(Initiative $initiative)
     {
         $initiative->delete();
